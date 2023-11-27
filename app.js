@@ -39,6 +39,21 @@ app.post("/adlog",async(request,response)=>{
     }
 })
 
+app.post("/userlog",async(request,response)=>{
+    let data=request.body
+    let getUsername=data.username
+    let getPassword=data.password
+    let result=await userModel.find({username:getUsername})
+    if (result.length>0) {
+        if (result[0].password==getPassword) {
+            response.json({"status":"success","data":result[0]})
+        } else {
+            response.json({"status":"Inavlid Username or Password !!!"})
+        }
+    } else {
+        response.json({"status":"User Does Not Exist !!!"})
+    }
+})
 
 
 
