@@ -99,6 +99,19 @@ app.post("/usviewp", async (request, response) => {
 
 
 
+app.post("/bookp", async (request, response) => {
+    let data = request.body
+    const packbook = new bookModel(data)
+    let result = await packbook.save()
+    if (result.packbookDate != "") {
+        response.json({ "status": "success" })
+    } else {
+        response.json({ "status": "error" })
+    }
+})
+
+
+
 
 
 
