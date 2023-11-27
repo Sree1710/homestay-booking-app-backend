@@ -60,7 +60,7 @@ app.post("/userlog", async (request, response) => {
     let result = await userModel.find({ username: getUsername })
     if (result.length > 0) {
         if (result[0].password == getPassword) {
-            jwt.sign({username:getUsername,password:getPassword},"hsbookapp",{expiresIn:"1d"},
+            jwt.sign({username:getUsername,password:getPassword},"hsubookapp",{expiresIn:"1d"},
             (error,token)=>{
                 if (error) {
                     response.json({"status":"Unauthorized User !!!"})
@@ -113,23 +113,17 @@ app.post("/adviewp", async (request, response) => {
 
 
 app.post("/usviewp", async (request, response) => {
-    let data = request.body
+    let data = request.body.packbookDate
     let token=request.body.token
-    let result = await bookModel.find(data)
+    let result = await bookModel.find({"packbookDate":data})
     if (result=="") {
         let pack2=await propertyModel.find()
-        jwt.verify(token,"hsbookapp",(error,decoded)=>{
-            if (decoded) {
-                response.json(pack2)
-            } else {
-                response.json({"status":"Unauthorized User !!!"})
-            }
-        })
+        response.json(pack2)
     } else {
-        const data2 = result[0].pack_id
+        const data2=result[0].pack_id
         let result2 = data2 ? { _id: { $ne: data2 } } : {}
         const pack = await propertyModel.find(result2)
-        jwt.verify(token,"hsbookapp",(error,decoded)=>{
+        jwt.verify(token,"hsubookapp",(error,decoded)=>{
             if (decoded) {
                 response.json(pack)
             } else {
@@ -137,6 +131,7 @@ app.post("/usviewp", async (request, response) => {
             }
         })
     }
+    
 })
 
 
@@ -147,7 +142,7 @@ app.post("/bookp", async (request, response) => {
     const packbook = new bookModel(data)
     let result = await packbook.save()
     if (result.packbookDate != "") {
-        jwt.verify(token,"hsbookapp",(error,decoded)=>{
+        jwt.verify(token,"hsubookapp",(error,decoded)=>{
             if (decoded) {
                 response.json({ "status": "success" })
             } else {
