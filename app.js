@@ -75,7 +75,10 @@ app.post("/addpack",async(request,response)=>{
 
 
 
-
+app.post("/adviewp",async(request,response)=>{
+    let result=await propertyModel.find()
+    response.json(result)
+})
 
 
 
