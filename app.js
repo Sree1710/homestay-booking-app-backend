@@ -6,6 +6,7 @@ const userModel = require('./userModel')
 const adminModel = require('./adminModel')
 const propertyModel = require('./propertyModel')
 const bookModel = require('./bookModel')
+const jwt=require('jsonwebtoken')
 
 const app = Express()
 app.use(bodyParser.json())
@@ -34,7 +35,14 @@ app.post("/adlog", async (request, response) => {
     let result = await adminModel.find({ username: getUsername })
     if (result.length > 0) {
         if (result[0].password == getPassword) {
-            response.json({ "status": "success", "data": result[0] })
+            jwt.sign({username:getUsername,password:getPassword},"hsbookapp",{expiresIn:"1d"},
+            (error,token)=>{
+                if (error) {
+                    response.json({"status":"Unauthorized User !!!"})
+                } else {
+                    response.json({ "status": "success", "data": result[0], "token":token })
+                }
+            })
         } else {
             response.json({ "status": "Invalid Username or Password !!!" })
         }
@@ -52,7 +60,14 @@ app.post("/userlog", async (request, response) => {
     let result = await userModel.find({ username: getUsername })
     if (result.length > 0) {
         if (result[0].password == getPassword) {
-            response.json({ "status": "success", "data": result[0] })
+            jwt.sign({username:getUsername,password:getPassword},"hsbookapp",{expiresIn:"1d"},
+            (error,token)=>{
+                if (error) {
+                    response.json({"status":"Unauthorized User !!!"})
+                } else {
+                    response.json({ "status": "success", "data": result[0], "token":token })
+                }
+            })
         } else {
             response.json({ "status": "Invalid Username or Password !!!" })
         }
@@ -65,10 +80,17 @@ app.post("/userlog", async (request, response) => {
 
 app.post("/addpack", async (request, response) => {
     let data = request.body
+    let token=request.body.token
     const pack = new propertyModel(data)
     let result = await pack.save()
     if (result.packName != "") {
-        response.json({ "status": "success" })
+        jwt.verify(token,"hsbookapp",(error,decoded)=>{
+            if (decoded) {
+                response.json({ "status": "success" })
+            } else {
+                response.json({ "status": "Unauthorized User !!!" })
+            }
+        })
     } else {
         response.json({ "status": "error" })
     }
@@ -77,23 +99,43 @@ app.post("/addpack", async (request, response) => {
 
 
 app.post("/adviewp", async (request, response) => {
+    let token=request.body.token
     let result = await propertyModel.find()
-    response.json(result)
+    jwt.verify(token,"hsbookapp",(error,decoded)=>{
+        if (decoded) {
+            response.json(result)
+        } else {
+            response.json({"status":"Unauthorized User !!!"})
+        }
+    })
 })
 
 
 
 app.post("/usviewp", async (request, response) => {
     let data = request.body
+    let token=request.body.token
     let result = await bookModel.find(data)
     if (result=="") {
         let pack2=await propertyModel.find()
-        response.json(pack2)
+        jwt.verify(token,"hsbookapp",(error,decoded)=>{
+            if (decoded) {
+                response.json(pack2)
+            } else {
+                response.json({"status":"Unauthorized User !!!"})
+            }
+        })
     } else {
         const data2 = result[0].pack_id
         let result2 = data2 ? { _id: { $ne: data2 } } : {}
         const pack = await propertyModel.find(result2)
-        response.json(pack)
+        jwt.verify(token,"hsbookapp",(error,decoded)=>{
+            if (decoded) {
+                response.json(pack)
+            } else {
+                response.json({"status":"Unauthorized User !!!"})
+            }
+        })
     }
 })
 
@@ -101,10 +143,17 @@ app.post("/usviewp", async (request, response) => {
 
 app.post("/bookp", async (request, response) => {
     let data = request.body
+    let token = request.body.token
     const packbook = new bookModel(data)
     let result = await packbook.save()
     if (result.packbookDate != "") {
-        response.json({ "status": "success" })
+        jwt.verify(token,"hsbookapp",(error,decoded)=>{
+            if (decoded) {
+                response.json({ "status": "success" })
+            } else {
+                response.json({ "status": "Unauthorized User !!!" })
+            }
+        })
     } else {
         response.json({ "status": "error" })
     }
@@ -113,8 +162,15 @@ app.post("/bookp", async (request, response) => {
 
 
 app.post("/adviewb",async(request,response)=>{
+    let token=request.body.token
     let result=await bookModel.find()
-    response.json(result)
+    jwt.verify(token,"hsbookapp",(error,decoded)=>{
+        if (decoded) {
+            response.json(result)
+        } else {
+            response.json({"status":"Unauthorized User !!!"})
+        }
+    })
 })
 
 
