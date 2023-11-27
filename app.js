@@ -112,7 +112,10 @@ app.post("/bookp", async (request, response) => {
 
 
 
-
+app.post("/adviewb",async(request,response)=>{
+    let result=await bookModel.find()
+    response.json(result)
+})
 
 
 
