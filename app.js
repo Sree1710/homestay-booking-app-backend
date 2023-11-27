@@ -4,6 +4,7 @@ const bodyParser=require('body-parser')
 const mongoose=require('mongoose')
 const userModel = require('./userModel')
 const adminModel = require('./adminModel')
+const propertyModel = require('./propertyModel')
 
 const app=Express()
 app.use(bodyParser.json())
@@ -23,6 +24,8 @@ app.post("/userreg",async(request,response)=>{
     }
 })
 
+
+
 app.post("/adlog",async(request,response)=>{
     let data=request.body
     let getUsername=data.username
@@ -39,6 +42,8 @@ app.post("/adlog",async(request,response)=>{
     }
 })
 
+
+
 app.post("/userlog",async(request,response)=>{
     let data=request.body
     let getUsername=data.username
@@ -54,6 +59,21 @@ app.post("/userlog",async(request,response)=>{
         response.json({"status":"User Does Not Exist !!!"})
     }
 })
+
+
+
+app.post("/addpack",async(request,response)=>{
+    let data=request.body
+    const pack=new propertyModel(data)
+    let result=await pack.save()
+    if (result.packName!="") {
+        response.json({"status":"success"})
+    } else {
+        response.json({"status":"error"})
+    }
+})
+
+
 
 
 
