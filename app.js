@@ -62,6 +62,18 @@ app.post("/userlog",async(request,response)=>{
 
 
 
+app.post("/addpack",async(request,response)=>{
+    let data=request.body
+    const pack=new propertyModel(data)
+    let result=await pack.save()
+    if (result.packName!="") {
+        response.json({"status":"success"})
+    } else {
+        response.json({"status":"error"})
+    }
+})
+
+
 
 
 
