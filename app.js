@@ -168,7 +168,18 @@ app.post("/adviewb",async(request,response)=>{
     })
 })
 
-
+app.post("/userviewp",async(request,response)=>{
+    let packid=request.body._id
+    let token=request.body.token
+    let result=await propertyModel.find({"_id":packid})
+    jwt.verify(token,"hsubookapp",(error,decoded)=>{
+        if (decoded) {
+            response.json(result)
+        } else {
+            response.json({"status":"Unauthorized User !!!"})
+        }
+    })
+})
 
 
 
