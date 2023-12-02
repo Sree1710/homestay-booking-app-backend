@@ -120,8 +120,8 @@ app.post("/usviewp", async (request, response) => {
         let pack2 = await propertyModel.find()
         response.json(pack2)
     } else {
-        const data2 = result[0].packName
-        let result2 = data2 ? { packName: { $nin: data2 } } : {}
+        const data2 = result[0].pack_id
+        let result2 = data2 ? { _id: { $nin: data2 } } : {}
         const pack = await propertyModel.find(result2)
         jwt.verify(token, "hsubookapp", (error, decoded) => {
             if (decoded) {
