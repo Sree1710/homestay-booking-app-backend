@@ -116,14 +116,12 @@ app.post("/usviewp", async (request, response) => {
     let data = request.body.packbookDate
     let token = request.body.token
     let result = await bookModel.find({ "packbookDate": data })
-    console.log(result)
     if (result == "") {
         let pack2 = await propertyModel.find()
         response.json(pack2)
     } else {
         const data2 = result[0].packName
-        console.log(data2)
-        let result2 = data2 ? { packName: { $ne: data2 } } : {}
+        let result2 = data2 ? { packName: { $nin: data2 } } : {}
         const pack = await propertyModel.find(result2)
         jwt.verify(token, "hsubookapp", (error, decoded) => {
             if (decoded) {
