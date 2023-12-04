@@ -116,21 +116,17 @@ app.post("/usviewp", async (request, response) => {
     let token=request.body.token
     let data=request.body
     let result=await bookModel.find({packbookDate:data})
-    if (result=="") {
-        let package=await propertyModel.find()
-        response.json(package)
-    } else {
-        const data2=result[0].packName
-        let pack=data2? {packName:{$ne:data2}}:{}
-        let result2=await propertyModel.find(pack)
-        jwt.verify(token,"hsubookapp",(error,decoded)=>{
-            if (decoded) {
-                response.json(result2)
-            } else {
-                response.json({"status":"Unauthorized User !!!"})
-            }
-        })
-    }
+    const data2=result[0].packName
+    let pack=data2? {packName:{$ne:data2}}:{}
+    let result2=await propertyModel.find(pack)
+    jwt.verify(token,"hsubookapp",(error,decoded)=>{
+         if (decoded) {
+            response.json(result2)
+        } else {
+            response.json({"status":"Unauthorized User !!!"})
+        }
+    })
+    
 })
 
 
