@@ -114,7 +114,7 @@ app.post("/adviewp", async (request, response) => {
 
 app.post("/usviewp", async (request, response) => {
     let token=request.body.token
-    let data=request.body.packbookDate
+    let data=request.body
     let result=await bookModel.find({packbookDate:data})
     if (result=="") {
         let package=await propertyModel.find()
