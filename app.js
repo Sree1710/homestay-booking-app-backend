@@ -113,20 +113,28 @@ app.post("/adviewp", async (request, response) => {
 
 
 app.post("/usviewp", async (request, response) => {
+    var pack=""
+    var packarray=[]
     let token=request.body.token
     let data = request.body
     let getDate=data.packbookDate
     let result = await bookModel.find({packbookDate:getDate})
-    console.log(result)
     if (result=="") {
         let pack2=await propertyModel.find()
         response.json(pack2)
     } else {
-        const data2 = result[0].packName
-        console.log(data2)
-        let result2 = data2 ? { packName: { $ne: data2 } } : {}
-        const pack = await propertyModel.find(result2)
-        console.log(pack)
+        const data3 = result
+        for(let i=0;i<data3.length;i++)
+        {
+            let packname=data3[i].packName
+            packarray.push(packname)
+            
+        }
+        console.log(packarray)
+        let result2 =  { packName: { $nin: packarray } } 
+        console.log(result2)
+            pack = await propertyModel.find(result2)
+            console.log(pack)
         jwt.verify(token,"hsubookapp",(error,decoded)=>{
             if (decoded) {
                 response.json(pack)
